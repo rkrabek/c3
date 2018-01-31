@@ -167,7 +167,6 @@ describe('c3 chart axis', function () {
                         values: tickGenerator
                     }
                 };
-                chart = window.c3.generate(args);
                 window.generatedTicks = tickGenerator(); // This should be removed from window
             });
 
