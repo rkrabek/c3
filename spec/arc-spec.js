@@ -279,9 +279,9 @@ describe('c3 chart arc', function () {
                             ['padded2', 90],
                             ['padded3', 50],
                             ['padded4', 20]
-                        ]
+                        ],
+                        type: 'gauge'
                     },
-                    type: 'gauge',
                     color: {
                         pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'],
                         threshold: {
@@ -334,17 +334,15 @@ describe('c3 chart arc', function () {
 
                 });
 
-                it('if only one data_column is visible the label should have "" for transform', function () {
-                    setTimeout(function () {
-                        var textBeforeHide = chart.internal.main.select('.c3-chart-arc.c3-target.c3-target-padded4 text');
-                        expect(textBeforeHide.attr('transform')).not.toBe('');
-                    },1000);
+                it('if only one data_column is visible the label should have "" for transform', function (done) {
+                    var textBeforeHide = chart.internal.main.select('.c3-chart-arc.c3-target.c3-target-padded4 text');
+                    expect(textBeforeHide.attr('transform')).not.toBe('');
                     chart.hide(['padded1', 'padded2', 'padded3']);
                     setTimeout(function () {
                         var textAfterHide = chart.internal.main.select('.c3-chart-arc.c3-target.c3-target-padded4 text');
                         expect(textAfterHide.attr('transform')).toBe('');
-                    },1000);
-
+                        done();
+                    }, 1000);
                 });
             });
 
