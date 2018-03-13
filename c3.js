@@ -90,31 +90,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
 
-
-
-
-
-
-
-
-
-
-
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 };
-
-
-
-
-
-
-
-
-
-
 
 var inherits = function (subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
@@ -131,16 +111,6 @@ var inherits = function (subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 };
-
-
-
-
-
-
-
-
-
-
 
 var possibleConstructorReturn = function (self, call) {
   if (!self) {
@@ -556,13 +526,14 @@ c3_axis_internal_fn.generateAxis = function () {
     axis.tickOffset = function () {
         return internal.tickOffset;
     };
-    axis.tickInterval = function () {
+    axis.tickInterval = function (tickCount) {
         var interval, length;
         if (params.isCategory) {
             interval = internal.tickOffset * 2;
         } else {
             length = axis.g.select('path.domain').node().getTotalLength() - internal.outerTickSize * 2;
-            interval = length / axis.g.selectAll('line').size();
+            var intervalDivisor = tickCount || axis.g.selectAll('line').size();
+            interval = length / intervalDivisor;
         }
         return interval === Infinity ? 0 : interval;
     };
@@ -2162,6 +2133,7 @@ if (!Function.prototype.bind) {
 // changes which were implemented in Firefox 43 and Chrome 46.
 
 (function () {
+
     if (!("SVGPathSeg" in window)) {
         // Spec: http://www.w3.org/TR/SVG11/single-page.html#paths-InterfaceSVGPathSeg
         window.SVGPathSeg = function (type, typeAsLetter, owningPathSegList) {
@@ -7886,8 +7858,12 @@ c3_chart_internal_fn.redrawBar = function (drawBar, withTransition) {
 };
 c3_chart_internal_fn.getBarW = function (axis, barTargetsNum) {
     var $$ = this,
-        config = $$.config,
-        w = typeof config.bar_width === 'number' ? config.bar_width : barTargetsNum ? axis.tickInterval() * config.bar_width_ratio / barTargetsNum : 0;
+        config = $$.config;
+    var maxUniqueXValues = $$.data.targets.reduce(function returnMaxLength(maxLength, target) {
+        var targetLength = target.value.length;
+        return Math.max(maxLength, targetLength);
+    });
+    var w = typeof config.bar_width === 'number' ? config.bar_width : barTargetsNum ? axis.tickInterval(maxUniqueXValues) * config.bar_width_ratio / barTargetsNum : 0;
     return config.bar_width_max && w > config.bar_width_max ? config.bar_width_max : w;
 };
 c3_chart_internal_fn.getBars = function (i, id) {
